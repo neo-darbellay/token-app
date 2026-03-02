@@ -3,11 +3,11 @@ import express from "express";
 import dotenv from "dotenv";
 import path from "path";
 
-dotenv.config({ path: path.resolve("../.env"), override: true });
+dotenv.config({ path: path.resolve("../.env") });
 
 import jwt from "jsonwebtoken";
 
-const { connectToDatabase } = await import("../utils/dbUtils.mjs");
+import { connectToDatabase } from "../utils/dbUtils.mjs";
 
 const router = express.Router();
 
@@ -49,11 +49,10 @@ router.post("/", connectToDatabaseMiddleware, async (req, res) => {
         expiresIn: "1h",
       });
 
-      res.cookie("Authorization", "Bearer " + token);
+      res.cookie("Authorization", token);
 
       return res.status(200).json({
         message: "Authentication successful",
-        token,
       });
     } else {
       res.status(401).json({ error: "Invalid username or password" });

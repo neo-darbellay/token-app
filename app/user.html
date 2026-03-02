@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Page</title>
+</head>
+<body>
+  <h1 id="greeting">Hello!</h1>
+  <p id="tokenDisplay" style="word-break: break-all;"></p>
+
+  <script>
+    // Read JWT token from cookie
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    const token = getCookie('Authorization'); // full cookie value
+    if (!token) {
+      document.getElementById('greeting').innerText = "No user logged in.";
+    } else {
+      try {
+        // Decode payload to get username (remove "Bearer " if present)
+        const tokenParts = token.split(' ');
+        const jwtString = tokenParts.length === 2 ? tokenParts[1] : tokenParts[0];
+        const payloadBase64 = jwtString.split('.')[1];
+        const payloadJson = JSON.parse(atob(payloadBase64));
+        const username = payloadJson.username || "User";
+
+        // Show greeting
+        document.getElementById('greeting').innerText = `Hello, ${username}!`;
+
+        // Show JWT token exactly as stored
+        document.getElementById('tokenDisplay').innerHTML = `JWT Token:<br>${token}`;
+      } catch (e) {
+        document.getElementById('greeting').innerText = "Error decoding token.";
+        console.error("Failed to decode JWT:", e);
+      }
+    }
+  </script>
+</body>
+</html>
