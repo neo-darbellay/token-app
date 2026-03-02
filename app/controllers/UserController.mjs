@@ -1,16 +1,20 @@
 import express from "express";
-
-// Import du module jwt
+import { expressjwt } from "express-jwt";
 
 const router = express.Router();
 
+const JWT_SECRET = process.env.JWT_SECRET || "super_secret_key";
+
+export const authenticateToken = expressjwt({
+  secret: JWT_SECRET,
+  algorithms: ["HS256"],
+});
+
 export const get = (req, res) => {
-
-    // Remplacez cette portion de code par votre traitement du jeton JWT
-    return res.status(418).json({error: 'Je suis une théière'});
-
+  res.status(200).json({
+    message: "Access granted",
+    user: req.auth,
+  });
 };
-
-router.get('/', get);
 
 export default router;
